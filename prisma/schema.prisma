@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Chat {
+  id                String    @id @default(uuid())
+  xConversationId   String    @unique
+  leadUsername      String
+  lastMessageText   String?
+  pendingNotifyAt   DateTime?
+  updatedAt         DateTime  @updatedAt
+  messages          Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  senderId  String
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
